@@ -1,0 +1,9 @@
+.board td {
+  background: #abc6f8;
+  width: 2vw;
+  height: 2vw;
+}
+
+.board .snake {
+  background: red;
+}

@@ -1,9 +1,12 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"net/http"
-	"strings"
+	// "strings"
+
+	// "github.com/gorilla/websocket"
+	"github.com/s4y/reserve"
 )
 
 type Point struct {
@@ -17,38 +20,6 @@ type State struct {
 }
 
 func main() {
-	http.HandleFunc("/", mainHandler)
+	http.Handle("/", reserve.FileServer(http.Dir("static")))
 	http.ListenAndServe(":8080", nil)
 }
-
-const homepage = `
-<!DOCTYPE html>
-<html>
-<head>
-<title>SNAAAAAKE!!!!</title>
-</head>
-<body>
-%s
-</body>
-</html>
-`
-
-func makeBoardHTML() string {
-	table := []string{}
-	n := 10
-	for row := 0; row < n; row++ {
-		rowCells := []string{}
-		for col := 0; col < n; col++ {
-			rowCells = append(rowCells, "<td><div style=\"background: #abc6f8;\">hi</div></td>")
-		}
-		table = append(table,  "<tr>" + strings.Join(rowCells, "") + "</tr>")
-	}
-	return "<table>" + strings.Join(table, "") + "</table>"
-}
-
-
-func mainHandler(w http.ResponseWriter, req *http.Request) {
-	w.Header().Set("CacheControl", "no-cache, no-store, must-revalidate")
-	fmt.Fprintf(w, homepage, makeBoardHTML())
-}
-

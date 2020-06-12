@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<link rel=stylesheet href=style.css>
+<div id=gameEl></div>
+
+<script>
+
+class Cell {
+  constructor() {
+    this.el = document.createElement('td');
+    this.isSnake = false;
+  }
+
+  setIsSnake(isSnake) {
+    this.isSnake = isSnake;
+    if (isSnake)
+      this.el.classList.add('snake');
+    else
+      this.el.classList.remove('snake');
+  }
+}
+
+// class Snake {
+//   constructor(startCell, velocity) {
+//     this.cells = [];
+//     this.velocity = [];
+//     this.addCell(startCell);
+//   }
+// 
+//   addCell() {
+//   }
+// }
+
+class Game {
+  constructor() {
+    this.boardEl = document.createElement('table');
+    this.boardEl.className = 'board';
+    this.cells = [];
+    this.snakes = [];
+    const n = 20;
+    for (let i = 0; i < n; i++) {
+      const row = document.createElement('tr');
+      this.cells.push([]);
+      for (let j = 0; j < n; j++) {
+        const cell = new Cell();
+        this.cells[i].push(cell);
+        row.appendChild(cell.el);
+      }
+      this.boardEl.appendChild(row);
+    }
+  }
+
+  getCell({ x, y }) {
+    return this.cells[this.cells.length-1-y][x];
+  }
+
+  addCellToSnake(snake, position) {
+    snake.cells.push(position);
+    this.getCell(position).setIsSnake(true);
+  }
+
+  newSnake(position, velocity) {
+    const snake = {
+      velocity,
+      cells: [],
+    };
+    this.snakes.push(snake);
+    this.addCellToSnake(snake, position);
+  }
+
+  step() {
+    for (const snake of this.snakes) {
+      const head = snake.cells[snake.cells.length-1];
+      const newCell = {
+        x: head.x + snake.velocity.x,
+        y: head.y + snake.velocity.y,
+      };
+      this.addCellToSnake(snake, newCell);
+
+      if (snake.cells.length > 5) {
+        const tail = snake.cells.shift();
+        this.getCell(tail).setIsSnake(false);
+      }
+    }
+  }
+}
+
+const game = new Game();
+gameEl.appendChild(game.boardEl);
+
+game.newSnake({ x: 10, y: 10 }, { x: 1, y: 0 });
+game.newSnake({ x: 10, y: 15 }, { x: 0, y: -1 });
+
+setInterval(function() {
+  game.step();
+}, 1000);
+
+</script>
